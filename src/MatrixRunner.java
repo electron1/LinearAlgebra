@@ -1,6 +1,14 @@
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+/**
+ * This class can be used to make the {@code Matrix} and {@code SquareMatrix} classes
+ * useful. The main method of this program will collect the data from the user to
+ * create a matrix, and then offer a number of functions to the user.
+ * @author Jack Smalligan
+ * @version 1.0
+ *
+ */
 public class MatrixRunner {
 
     private static Scanner s = new Scanner(System.in);
@@ -36,6 +44,9 @@ public class MatrixRunner {
 
     public static void performOperation(String function) {
         switch (function) {
+        case "DISPLAY":
+            System.out.println(mat);
+            break;
         case "ECHELON":
             System.out.println(Matrix.createEchelonForm(mat));
             break;
@@ -73,7 +84,7 @@ public class MatrixRunner {
         }
     }
 
-    public static void fullProcess() {
+    private static void fullProcess() {
         int rows = collectData("rows");
         int cols = collectData("columns");
 
@@ -87,7 +98,7 @@ public class MatrixRunner {
 
         while (true) {
             System.out.println();
-            System.out.print("Enter your function (ECHELON, RREF, INVERSE, DETERMINANT, NEW, EXIT): ");
+            System.out.print("Enter your function (DISPLAY, ECHELON, RREF, INVERSE, DETERMINANT, NEW, EXIT): ");
             String function = s.next();
             performOperation(function);
         }

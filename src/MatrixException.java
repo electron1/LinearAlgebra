@@ -1,6 +1,11 @@
 
 public class MatrixException extends RuntimeException {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 7334444785459137192L;
+
     public MatrixException() {
         // TODO Auto-generated constructor stub
     }

@@ -1,28 +1,45 @@
 
-//This class represents a N by N matrix
-//Jack Smalligan
-//1 October 2018
-
+/**
+ * This class is a special case of the matrix class that offers a few additional
+ * methods that are specific to square matrices. Most notably, inverses and
+ * determinants.
+ * @author Jack Smalligan
+ * @version 1.0
+ */
 public class SquareMatrix extends Matrix {
 
+    /**
+     * Constructs a {@code SquareMatrix} with the given data
+     * @param matrix a 2D array to back this Matrix
+     */
     public SquareMatrix(double[][] matrix) {
         for (int r = 0; r <= matrix.length; r++) {
             assert matrix.length == matrix[r].length : "Matrix must be square";
         }
 
         super.setMatrix(matrix);
-    }// constructor (matrix arg)
+    }
 
+    /**
+     * Constructs a square zero matrix of the given dimension
+     * @param n the number of rows and columns for this matrix
+     */
     public SquareMatrix(int n) {
-        //if no data is given, construct a zero matrix
-        super(n,n);
-    }// constructor (int arg)
+        super(n, n);
+    }
 
+    /**
+     * If no size is specified, construct a zero matrix of size 1
+     */
     public SquareMatrix() {
-        // if no size is used, construct a zero matrix of size 1
         this(1);
-    }// constructor (no args)
+    }
 
+    /**
+     * Generate the identity matrix of the given dimension
+     * @param n the number of rows and columns in the desired identity
+     * @return an identity matrix of the given dimension
+     */
     public static SquareMatrix getIdentity(int n) {
         SquareMatrix output = new SquareMatrix(n);
 
@@ -34,9 +51,15 @@ public class SquareMatrix extends Matrix {
             }
         }
         return output;
-    }// getIdentity
+    }
 
-    public static SquareMatrix getInverse(SquareMatrix m) {
+    /**
+     * Construct the inverse of the given matrix
+     * @param m a {@code SquareMatrix} whose inverse is to be determined
+     * @return the inverse of {@code m}
+     * @throws MatrixException if the inverse doesn't exist
+     */
+    public static SquareMatrix getInverse(SquareMatrix m) throws MatrixException {
         if (Math.abs(m.getDeterminant()) < 0.00001) {
             throw new MatrixException("Matrix is not invertible");
         }
@@ -65,41 +88,25 @@ public class SquareMatrix extends Matrix {
         return output;
     }
 
+    /**
+     * Gets the dimension of this matrix
+     * @return the number of rows and columns
+     */
     public int getN() {
         return super.getCols();
     }
 
-    public static SquareMatrix add(SquareMatrix one, SquareMatrix two) {
-        int myN = one.getN();
-        SquareMatrix result = new SquareMatrix(myN);
-        for (int r = 1; r <= myN; r++) {
-            for (int c = 1; c <= myN; c++) {
-                result.setElement(r, c, one.getElement(r, c) + two.getElement(r, c));
-            }
-        }
-        return result;
-    }// add (any two arbitrary matrices of the same size)
-
-    public void add(SquareMatrix other) {
-        this.setMatrix(add(this, other).getMatrix());
-    }// add (updating this matrix)
-
-    public static SquareMatrix multiplyByScalar(SquareMatrix mat, int scalar) {
-        int myN = mat.getN();
-        SquareMatrix result = new SquareMatrix(myN);
-        for (int r = 1; r <= myN; r++) {
-            for (int c = 1; c <= myN; c++) {
-                result.setElement(r, c, mat.getElement(r, c) * scalar);
-            }
-        }
-        return result;
-    }// multiplyByScalar (an arbitrary matrix)
-
-    public void multiplyByScalar(int scalar) {
-        this.setMatrix(multiplyByScalar(this, scalar).getMatrix());
-    }// multiplyByScalar (updating this matrix)
-
+    /**
+     * Calculates the determinant of a given matrix
+     * @param mat the matrix to find the determinant of
+     * @return the determinant of {@code mat}
+     */
     public static double getDeterminant(SquareMatrix mat) {
+        // Special case where n=1:
+        if (mat.getN() == 1) {
+            return mat.getElement(1, 1);
+        }
+        // Otherwise:
         // Define recursively:
         // Base case: 2 X 2 matrix, return ad-bc:
         // |a b|
@@ -113,49 +120,17 @@ public class SquareMatrix extends Matrix {
         else {
             int sum = 0;
             for (int i = 1; i <= mat.getN(); i++) {
-                sum += Math.pow(-1, i - 1) * mat.getElement(1, i) * getDeterminant(getMinor(1, i, mat));
+                sum += Math.pow(-1, i - 1) * mat.getElement(1, i) * getDeterminant((SquareMatrix) getMinor(1, i, mat));
             }
             return sum;
         }
-    }// getDeterminant (an arbitrary matrix)
-
-    public double getDeterminant() {
-        return getDeterminant(this);
-    }// getDeterminant (this instance)
-
-    public static SquareMatrix getMinor(int i, int j, SquareMatrix mat) {
-        // The (i,j) minor of a matrix is the matrix without row i and column j
-
-        double[] arr = new double[(mat.getN() - 1) * (mat.getN() - 1)];
-        // z keeps track of position of inserting elements in the 1D array
-        int z = 0;
-        for (int r = 1; r <= mat.getN(); r++) {
-            for (int c = 1; c <= mat.getN(); c++) {
-                if (r == i || c == j) {
-                } // If we are in the i-th row or the j-th column:
-                // Do not insert into the new matrix
-                else {
-                    arr[z] = mat.getElement(r, c);
-                    z++;
-                }
-            }
-        }
-        return new SquareMatrix(arrayToMatrix(mat.getN() - 1, arr));
-    }// getMinor
-
-    public static double[][] arrayToMatrix(int n, double[] arr) {
-        double[][] result = new double[n][n];
-        int i = 0;
-        for (int r = 0; r < n; r++) {
-            for (int c = 0; c < n; c++) {
-                result[r][c] = arr[i];
-                i++;
-            }
-        }
-        return result;
     }
 
-    public static void main(String[] args) {
-
+    /**
+     * Calculates the determinant of this matrix
+     * @return the determinant of this matrix
+     */
+    public double getDeterminant() {
+        return getDeterminant(this);
     }
 }
