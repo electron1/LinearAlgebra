@@ -11,6 +11,13 @@ public class Matrix {
 
     // By convention in this class, rows and columns start at 1
 
+    /**
+     * This is used as how close a double has to be to be considered equal to zero
+     * for purposes of double equality comparison
+     */
+    private final static double DELTA = 0.00000001;
+
+    private double determinant;
     private double[][] mat;
     private int rows;
     private int cols;
@@ -166,6 +173,7 @@ public class Matrix {
             }
         }
 
+        output.moveZerosToBottom();
         return output;
     }
 
@@ -181,7 +189,6 @@ public class Matrix {
         // create a leading 1 in each nonzero row
         for (int i = 1; i <= output.getRows(); i++) {
             double leadingEntry = output.getLeadingEntry(i);
-
             if (leadingEntry != 0) {
                 output.scaleRow(i, 1 / leadingEntry);
             }
@@ -194,8 +201,8 @@ public class Matrix {
                 currentRow -= 1;
                 continue;
             } else {
+                int leadingEntryColumn = output.getLeadingEntryColumn(currentRow);
                 for (int r = currentRow - 1; r >= 1; r--) {
-                    int leadingEntryColumn = output.getLeadingEntryColumn(currentRow);
 
                     if (leadingEntryColumn != -1) { // if that row is not all zeros
                         double factor = -output.getElement(r, leadingEntryColumn);
@@ -237,7 +244,7 @@ public class Matrix {
                 }
                 for (int r = 1; r <= this.getRows(); r++) {
                     for (int c = 1; c <= this.getCols(); c++) {
-                        if (Math.abs(((Matrix) other).getElement(r, c) - this.getElement(r, c)) > 0.000001) {
+                        if (Math.abs(((Matrix) other).getElement(r, c) - this.getElement(r, c)) > DELTA) {
                             return false;
                         }
                     }
@@ -325,7 +332,7 @@ public class Matrix {
         double[] row = this.getRow(r);
 
         for (double d : row) {
-            if (d != 0) {
+            if (Math.abs(d) > DELTA) {
                 return d;
             }
         }
@@ -345,7 +352,7 @@ public class Matrix {
         double[] row = this.getRow(r);
 
         for (int i = 0; i < row.length; i++) {
-            if (row[i] != 0) { // if row[i] != 0 essentially
+            if (Math.abs(row[i]) > DELTA) { // if row[i] != 0 essentially
                 return i + 1; // add one to get the column number, which begins at 1
             }
         }
@@ -622,7 +629,7 @@ public class Matrix {
         for (double[] row : this.mat) {
             s += "| ";
             for (double e : row) {
-                if (e == 0) {
+                if (Math.abs(e) < DELTA) {
                     e = 0;
                 }
                 s += String.format("%" + charsPerEntry + ".2f ", e);

@@ -133,4 +133,5 @@ public class SquareMatrix extends Matrix {
     public double getDeterminant() {
         return getDeterminant(this);
     }
+
 }
